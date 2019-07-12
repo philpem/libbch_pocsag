@@ -1,3 +1,9 @@
 *.o
 *~
 .*.sw?
+*Runner.cpp
+*Runner.o
+
+bchchallenge
+bchchallenge_test
+bch

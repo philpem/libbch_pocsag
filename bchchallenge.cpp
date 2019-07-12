@@ -284,7 +284,7 @@ void test_BCH_double_bit_errors(void)
 	printf("\t%s: %zu tests finished\n", __func__, numTests);
 }
 
-
+/*
 int main()
 {
 
@@ -297,3 +297,4 @@ int main()
 
 	return UNITY_END();
 }
+*/
