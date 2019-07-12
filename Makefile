@@ -1,35 +1,61 @@
 .PHONY: all clean test FORCE
 
-UNITYDIR = ./unity
-
 # Set this to .exe on Windows
 EXE =
 
-CFLAGS   += -I${UNITYDIR}/src
-CXXFLAGS += -I${UNITYDIR}/src
+
+# C/C++ and linker flags
+CFLAGS   += -I. -I..
+CXXFLAGS += -I. -I..
 LDFLAGS  +=
 
-UNITY_O = ${UNITYDIR}/src/unity.o
 
-BCHCHAL_O = bchchallenge.o
-BCHCHAL_TR_O = bchchallengeRunner.o
+# TODO: Move BCH code into a library or object file
+# TODO: add build rules for the BCH code
 
 
 # Build everything
 all:
 
 # Clean the build directory
-clean:
-	rm -f ${BCHCHAL_O} ${UNITY_O}
+clean:	testclean
+
+
+
+
+
+
+#############################################################################
+#
+# UNIT TESTS
+#
+#############################################################################
 
 TESTS       := $(basename $(wildcard tests/*.cpp))
-#TESTRUNNERS := $(addsuffix _Runner${EXE},${TESTS})
+TESTRUNNERS := $(addsuffix _Runner${EXE},${TESTS})
 TESTRESULTS := $(addsuffix .testresults,${TESTS})
+
+# Location of Unity and its compiled object file
+UNITYDIR = ./unity
+UNITY_O = ${UNITYDIR}/src/unity.o
+
+# Add Unity to the C/C++ build path
+CFLAGS   += -I${UNITYDIR}/src
+CXXFLAGS += -I${UNITYDIR}/src
 
 
 # Run all the tests
 test:	${TESTRESULTS}
 	ruby ${UNITYDIR}/auto/stylize_as_junit.rb -r tests
+
+
+# Clean up all the tests
+testclean:
+	-rm -f ${UNITY_O}
+	-rm -f ${TESTRUNNERS}
+	-rm -f ${TESTRESULTS}
+	-rm -f results.xml
+
 
 # Run a test and produce the test results
 tests/%.testresults:	tests/%_Runner
@@ -44,7 +70,8 @@ tests/%_Runner:	tests/%_Runner.cpp tests/%.cpp ${UNITY_O}
 tests/%_Runner.cpp: tests/%.cpp FORCE
 	ruby ${UNITYDIR}/auto/generate_test_runner.rb $< $@
 
-
-# see https://www.gnu.org/software/make/manual/html_node/Force-Targets.html
+# Force target -- used to make sure the tests always run
+# (more specifically - to always regenerate the test runner)
+#   see https://www.gnu.org/software/make/manual/html_node/Force-Targets.html
 FORCE:
 
