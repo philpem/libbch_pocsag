@@ -26,7 +26,7 @@ test: bchchallenge_test
 	$(eval TMPD := $(shell mktemp -d -t BCHTest.XXXXXXXX))
 	-./bchchallenge_test | tee -a ${TMPD}/bchchallenge.testresults
 	-ruby ${UNITYDIR}/auto/stylize_as_junit.rb -r ${TMPD}
-	rm -rf ${testfile}
+	rm -rf ${TMPD}
 
 
 bchchallenge_test:	${BCHCHAL_O} ${BCHCHAL_TR_O} ${UNITY_O}
