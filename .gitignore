@@ -1,9 +1,11 @@
+# Object files
 *.o
+
+# Editor temporary files
 *~
 .*.sw?
-*Runner.cpp
-*Runner.o
 
-bchchallenge
-bchchallenge_test
-bch
+# Test runners and test XML
+tests/*_Runner
+tests/*.test*
+results.xml
