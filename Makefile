@@ -9,6 +9,8 @@ CFLAGS   += -I. -I..
 CXXFLAGS += -I. -I..
 LDFLAGS  +=
 
+CORE_O   = bch.o
+
 
 # TODO: Move BCH code into a library or object file
 # TODO: add build rules for the BCH code
@@ -31,7 +33,7 @@ clean:	testclean
 #
 #############################################################################
 
-TESTS       := $(basename $(wildcard tests/*.cpp))
+TESTS       := $(basename $(wildcard tests/*.c) $(wildcard tests/*.cpp))
 TESTRUNNERS := $(addsuffix _Runner${EXE},${TESTS})
 TESTRESULTS := $(addsuffix .testresults,${TESTS})
 
@@ -62,13 +64,21 @@ tests/%.testresults:	tests/%_Runner
 	$< | tee $@
 
 # Build the Test Runner from the test source and runner source
-tests/%_Runner:	tests/%_Runner.cpp tests/%.cpp ${UNITY_O}
+tests/%_Runner:	tests/%_Runner.c tests/%.c ${CORE_O} ${UNITY_O}
 	g++ ${CFLAGS} ${LDFLAGS} -o $@ $^
 
+tests/%_Runner:	tests/%_Runner.cpp tests/%.cpp ${CORE_O} ${UNITY_O}
+	g++ ${CXXFLAGS} ${LDFLAGS} -o $@ $^
+
+
 # Build the Test Runner source from the test
-# The FORCE rule 
 tests/%_Runner.cpp: tests/%.cpp FORCE
-	ruby ${UNITYDIR}/auto/generate_test_runner.rb $< $@
+	ruby ${UNITYDIR}/auto/generate_test_runner.rb  $< $@
+
+tests/%_Runner.c: tests/%.c FORCE
+	ruby ${UNITYDIR}/auto/generate_test_runner.rb  $< $@
+
+
 
 # Force target -- used to make sure the tests always run
 # (more specifically - to always regenerate the test runner)
