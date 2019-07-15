@@ -1,11 +1,9 @@
-//============================================================================
-// Name        : bchchallenge.cpp
-// Author      : 
-// Version     :
-// Copyright   : Your copyright notice
-// Description : Hello World in C++, Ansi-style
-//============================================================================
-
+/**
+ * @file
+ * @brief BCH test suite
+ *
+ * Test suite for the BCH library.
+ */
 
 #include <cstdio>
 #include <iostream>
@@ -125,3 +123,4 @@ void test_BCH_double_bit_errors(void)
 	printf("\t%s: %zu tests finished\n", __func__, numTests);
 }
 
+// TODO: confirm that all three-bit errors are detected
