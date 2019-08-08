@@ -25,7 +25,7 @@ void tearDown(void) {
 }
 
 
-void test_BCH_single_bit_errors(void)
+void test_BCH_sanity(void)
 {
 	// message buffer for unity
 	char message[100];
@@ -37,9 +37,19 @@ void test_BCH_single_bit_errors(void)
 	// Start by making sure this assumption is true
 	for (size_t n=0; n<sizeof(TEST_CWS)/sizeof(TEST_CWS[0]); n++) {
 		sprintf(message, "testCW index %zu: 0x%08X", n, TEST_CWS[n]);
-		TEST_ASSERT_EQUAL_UINT(bch_encode(TEST_CWS[n]), TEST_CWS[n]);
+		TEST_ASSERT_EQUAL_UINT_MESSAGE(bch_encode(TEST_CWS[n]), TEST_CWS[n], message);
 	}
+}
 
+void test_BCH_single_bit_errors(void)
+{
+	// message buffer for unity
+	char message[100];
+
+	// codewords to test with -- these are the POCSAG Idle Codeword and Sync Codeword
+	const uint32_t TEST_CWS[] = {0x7A89C197UL, 0x7CD215D8UL};
+
+	// Make sure all possible single-bit errors are correctable using the test codewords
 	for (size_t n=0; n<sizeof(TEST_CWS)/sizeof(TEST_CWS[0]); n++) {
 		uint32_t OriginalCW = TEST_CWS[n];
 
@@ -78,13 +88,7 @@ void test_BCH_double_bit_errors(void)
 	// codewords to test with -- these are the POCSAG Idle Codeword and Sync Codeword
 	const uint32_t TEST_CWS[] = {0x7A89C197UL, 0x7CD215D8UL};
 
-	// Idle Codeword and Sync Codeword have valid BCH and parity and can be error-corrected
-	// Start by making sure this assumption is true
-	for (size_t n=0; n<sizeof(TEST_CWS)/sizeof(TEST_CWS[0]); n++) {
-		sprintf(message, "testCW index %zu: 0x%08X", n, TEST_CWS[n]);
-		TEST_ASSERT_EQUAL_UINT(bch_encode(TEST_CWS[n]), TEST_CWS[n]);
-	}
-
+	// Make sure all possible double-bit errors are correctable using the test codewords
 	for (size_t n=0; n<sizeof(TEST_CWS)/sizeof(TEST_CWS[0]); n++) {
 		uint32_t OriginalCW = TEST_CWS[n];
 
