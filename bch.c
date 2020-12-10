@@ -34,15 +34,19 @@ uint32_t bch_encode(const uint32_t cw)
 	return (parity%2) ? (local_cw | 1) : local_cw;
 }
 
-
+// Debug options for error correction
+// -- Enable debug
 //#define BCH_REPAIR_DEBUG
+// -- Enable printing the output of the ECC process step-by-step
 //#define BCH_REPAIR_DEBUG_STEPBYSTEP
 
 int bch_repair(const uint32_t cw, uint32_t *repaired_cw)
 {
 	// calculate syndrome
 	// We do this by recalculating the BCH parity bits and XORing them against the received ones
-	uint32_t syndrome = ((bch_encode(cw) ^ cw) >> 1) & 0x3FF;		// mask off data bits and parity, leaving the error syndrome in the LSB
+
+	// mask off data bits and parity, leaving the error syndrome in the LSB
+	uint32_t syndrome = ((bch_encode(cw) ^ cw) >> 1) & 0x3FF;
 
 	if (syndrome == 0) {
 		// Syndrome of zero indicates no repair required
@@ -74,7 +78,7 @@ int bch_repair(const uint32_t cw, uint32_t *repaired_cw)
 			(syndrome == 0x076) ||		// 0x076: Two errors, two OK bits between
 			(syndrome == 0x255) ||		// 0x255: Two errors, three OK bits between
 			(syndrome == 0x0F0) ||		// 0x0F0: Two errors, four OK bits between
-			(syndrome == 0x216) ||
+			(syndrome == 0x216) ||		// ... and so on
 			(syndrome == 0x365) ||
 			(syndrome == 0x068) ||
 			(syndrome == 0x25A) ||
@@ -100,7 +104,6 @@ int bch_repair(const uint32_t cw, uint32_t *repaired_cw)
 			(syndrome == 0x3B6) ||
 			(syndrome == 0x3B5)
 		   ) {
-										// FIXME: Doesn't detect double bit errors
 			// Syndrome matches an error in the MSB
 			// Correct that error and adjust the syndrome to account for it
 			syndrome ^= 0x3B4;
@@ -131,7 +134,7 @@ int bch_repair(const uint32_t cw, uint32_t *repaired_cw)
 		// mask off bits which fall off the end of the syndrome shift register
 		syndrome &= 0x3FF;
 
-		// FIXME: Can we exit early if the syndrome is zero? (no more errors to correct)
+		// XXX Possible optimisation: Can we exit early if the syndrome is zero? (no more errors to correct)
 	}
 
 #ifdef BCH_REPAIR_DEBUG
