@@ -9,7 +9,7 @@ libbch_pocsag includes a test harness which checks a few known test vectors (fro
 
 Doxygen-style comments are included to show how the library is intended to be used.
 
-This is part of a personal investigation into radio paging protocols, and is released under the Apache License version 2.0 for use by the amateur radio community.
+This is part of a personal investigation into radio paging protocols, and is released under the Apache License version 2.0 for use by the amateur radio community (and others).
 
 Bug reports and pull requests are welcome!
 
