@@ -11,6 +11,8 @@
 #ifndef BCH_H
 #define BCH_H
 
+#include <stdint.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
